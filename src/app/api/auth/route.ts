@@ -10,9 +10,9 @@ export async function POST(request) {
 
         if(!email) return NextResponse.json({error: "email was expected"}, {status: 400});
 
-        const auth = await getOrCreateAuth(email)
+        const auth = await getOrCreateAuth(email);
 
-        return NextResponse.json({auth})
+        return NextResponse.json({ auth })
     } catch(error){
         return NextResponse.json({error: "body was expected"}, {status: 400})
     }
