@@ -14,10 +14,12 @@
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
     "firebase-admin": "^13.6.0",
+    "jsonwebtoken": "^9.0.3",
     "mercadopago": "^2.12.0",
     "next": "^16.1.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "resend": "^6.8.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

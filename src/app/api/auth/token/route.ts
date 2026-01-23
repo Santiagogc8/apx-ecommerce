@@ -1,19 +1,32 @@
-// ToDo: POST /auth/token
+// * POST /auth/token
 // Recibe un email y un código y valida que sean los correctos. En el caso de que sean correctos devuelve un token e invalida el código.
+
 import { NextResponse } from "next/server";
 import { verifyAuth } from "src/controllers/auth";
+import { apiErrorHandler } from "src/middlewares/apiErrorHandler";
+import { z } from "zod"
 
-export async function POST(request) {
-    try{
-        const body = await request.json();
-        const { email, code } = body;
+// Creamos un loginSchema con zod
+const loginSchema = z.object({
+    email: z.email(),
+    code: z.string().length(6)
+});
 
-        if(!email || !code) return NextResponse.json({error: "email and code were expected"}, {status: 400});
+// Y creamos el endpoint POST que tiene el middleware apiErrorHandler para enviar errores
+export const POST = apiErrorHandler(async (req: Request) => {
+    const body = await req.json(); // Extraemos el body
+    const validation = loginSchema.safeParse(body); // Y lo parseamos con el loginSchema
 
-        const verifiedCode = await verifyAuth(email, code);
-		return NextResponse.json({ token: verifiedCode })
-    } catch(error){
-		console.error(error)
-        return NextResponse.json({error: "body was expected"}, {status: 400})
+    if (!validation.success) {
+        // Si la validacion es falsa, tiramos un error que nos dice los campos faltantes o sobrantes
+        return NextResponse.json({ error: validation.error }, { status: 400 });
     }
-}
+
+    const {email, code} = validation.data; // Extraemos el email y el codigo de la validacion
+
+    // E intentamos verificar el auth con el email y el codigo recibido
+    const token = await verifyAuth(email, code);
+
+    // Retornamos el token con un status 200
+    return NextResponse.json({ token }, { status: 200 });
+});
