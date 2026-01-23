@@ -1,6 +1,6 @@
 import { firestore } from "src/lib/firestore";
 import z from "zod";
-import { User, UserSchema } from "src/models/user";
+import { User, UserSchema, UserUpdatePayload, UserUpdateSchema, AddressSchema, UserAddress } from "src/models/user";
 import { ApiError } from "src/models/apiError";
 
 // Guardamos la coleccion de users en una variable para manipularla
@@ -48,4 +48,83 @@ async function createUser(email: string) {
     return {id: ref.id, ...validData} as User;
 }
 
-export { getOrCreateUser, createUser }
+// Obtener la informacion actualizada del user
+async function getUser(userId: string){
+    try{
+        // Obtenemos el doc con el userId recibido
+        const user = await userCollection.doc(userId).get();
+
+        // Si no existe, tiramos error
+        if(!user.exists){
+            throw new ApiError("user not found", 404);
+        }
+
+        // Retornamos la data
+        return user.data();
+    } catch(error){ // Si hay un error diferente, tiramos 500
+        throw new ApiError(error.message, 500);
+    }
+}
+
+// La funcion para actualizar al user recibe una nueva data y un userId
+async function patchUserData(newData: UserUpdatePayload, userId: string){
+    try{
+        // Obtenemos el doc con el userId recibido
+        const userDoc = await userCollection.doc(userId);
+        // Obtenemos la data del doc
+        const userData = await userDoc.get();
+
+        // Verificamos si el user existe. Si no, tiramos error
+        if(!userData.exists){
+            throw new ApiError("user not found", 404);
+        }
+
+        // Obtenemos la data valida parseando la data recibida con el UserUpdateSchema
+        const validData = UserUpdateSchema.parse(newData);
+        await userDoc.update(validData); // Le pedimos a firestore que actualice el documento
+
+        // Y retornamos un objeto con informacion
+        return {
+            success: true,
+            message: "User updated successfully",
+            updatedFields: Object.keys(validData),
+            updatedLines: Object.keys(validData).length,
+            id: userId
+        };
+    } catch(error){ // Si hay un error diferente, tiramos 500
+        throw new ApiError(error.message, 500);
+    }
+}
+
+// Funcion para actualizar el address
+async function patchUserAddress(address: UserAddress, userId: string) {
+    try{
+        // Obtenemos el doc con el userId recibido
+        const userDoc = await userCollection.doc(userId);
+        // Obtenemos la data del doc
+        const userData = await userDoc.get();
+
+        // Verificamos si el user existe. Si no, tiramos error
+        if(!userData.exists){
+            throw new ApiError("user not found", 404);
+        }
+
+        const validAddress = AddressSchema.parse(address);
+        await userDoc.update({address: validAddress}); // Le pedimos a firestore que actualice el documento
+
+        // Y retornamos un objeto con informacion
+        return {
+            success: true,
+            message: "User address updated successfully",
+            id: userId
+        };
+    } catch(error){ // Si hay un error diferente, tiramos 500
+        if (error instanceof z.ZodError) {
+            throw new ApiError('incomplete information in body', 400);
+        }
+
+        throw new ApiError(error.message, 500);
+    }
+}
+
+export { getOrCreateUser, createUser, getUser, patchUserData, patchUserAddress }
