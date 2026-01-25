@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
 	const queryOffset = parseInt(searchParams.get('offset') as string); // Obtenemos el offset y lo convertimos a int
 	const q = searchParams.get('q') as string;
 
-	console.log(queryLimit, queryOffset, q)
-
 	const list = await getProducts(q, queryOffset, queryLimit);
 
 	return NextResponse.json({list}, {status: 200})

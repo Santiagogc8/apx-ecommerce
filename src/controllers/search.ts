@@ -3,22 +3,28 @@ import { base } from "../lib/airtable"
 async function getProducts(q: string, offset: number, limit:number) {
     const results = base('Furniture').select({
         offset: offset,
-        fields: [q],
-        pageSize: limit
-    }).eachPage(function page(records, fetchNextPage) {
-        // This function (`page`) will get called for each page of records.
+        pageSize: limit,
+        filterByFormula: `SEARCH('${q}', {Name})`
+    })
 
-        records.forEach(function(record) {
-            console.log('Retrieved', record.get('Name'));
+    return new Promise((resolve, reject) => {
+        results.firstPage((err, records) => {
+            if (err) return reject(err);
+            
+            // Airtable adjunta el offset a la respuesta de la página si hay más resultados
+            // @ts-ignore (Airtable types pueden ser un poco estrictos aquí)
+            const nextOffset = records.offset || null;
+
+            const data = records.map(r => ({
+                id: r.id,
+                ...r.fields
+            }));
+
+            resolve({
+                productos: data,
+                offset: nextOffset // Este es el "ticket" para la siguiente página
+            });
         });
-
-        // To fetch the next page of records, call `fetchNextPage`.
-        // If there are more records, `page` will get called again.
-        // If there are no more records, `done` will get called.
-        fetchNextPage();
-
-    }, function done(err) {
-        if (err) { console.error(err); return; }
     });
 }
 
