@@ -13,6 +13,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
+    "airtable": "^0.12.2",
     "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.3",
     "mercadopago": "^2.12.0",
