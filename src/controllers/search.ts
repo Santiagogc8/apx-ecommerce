@@ -1,31 +1,57 @@
-import { base } from "../lib/airtable"
+import { ApiError } from "src/models/apiError";
+import { airtableBase } from "../lib/airtable";
+import { productsClient, SearchResponse } from "src/middlewares/algolia";
 
-async function getProducts(q: string, offset: number, limit:number) {
-    const results = base('Furniture').select({
-        offset: offset,
-        pageSize: limit,
-        filterByFormula: `SEARCH('${q}', {Name})`
-    })
+async function syncProducts() {
+    try{
+        await new Promise((resolve, reject) => {
+            airtableBase("Furniture").select().eachPage(async function page(records, fetchNextPage) {
+                const algoliaRecords = (records.map(record => {
+                    return {
+                        objectID: record.id,
+                        ...record.fields
+                    }
+                }));
 
-    return new Promise((resolve, reject) => {
-        results.firstPage((err, records) => {
-            if (err) return reject(err);
-            
-            // Airtable adjunta el offset a la respuesta de la página si hay más resultados
-            // @ts-ignore (Airtable types pueden ser un poco estrictos aquí)
-            const nextOffset = records.offset || null;
+                await productsClient.saveObjects({
+                    indexName: "products-index",
+                    objects: algoliaRecords
+                });
 
-            const data = records.map(r => ({
-                id: r.id,
-                ...r.fields
-            }));
-
-            resolve({
-                productos: data,
-                offset: nextOffset // Este es el "ticket" para la siguiente página
-            });
+                fetchNextPage();
+            },
+                function done(err) {
+                    if (err) reject(err);
+                    resolve(true);
+                }
+            );
         });
-    });
+    } catch(error){
+        throw new ApiError(error.message, 500);
+    }
 }
 
-export { getProducts }
+async function getProducts(q: string, offset: number, limit:number) {
+    try {
+		const response = await productsClient.search({
+			requests: [
+				{ indexName: "products-index", query: q, hitsPerPage: limit, page: Math.floor(offset / limit), filters: '"In stock" = 1'},
+			],
+		});
+
+        const searchResult = response.results[0] as SearchResponse;
+
+		return {
+			results: searchResult.hits,
+			pagination: {
+				offset,
+				limit,
+				total: searchResult.nbHits,
+			},
+		};
+	} catch (error) {
+        throw new ApiError(error.message, 500);
+	}
+}
+
+export { getProducts, syncProducts }

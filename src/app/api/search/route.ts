@@ -1,16 +1,23 @@
 // ToDo: GET /search?q=query&offset=0&limit=10
 // Buscar productos en nuestra base de datos. Chequea stock y todo lo necesario. Este endpoint utiliza la técnica que vimos sobre Airtable y Algolia.
-import { getProducts } from "src/controllers/search";
+import { getProducts, syncProducts } from "src/controllers/search";
 import { NextResponse, NextRequest } from "next/server";
+import { apiErrorHandler } from "src/middlewares/apiErrorHandler";
+import { getOffsetAndLimitFromReq } from "src/middlewares/params";
 
-export async function GET(req: NextRequest) {
-	const searchParams = req.nextUrl.searchParams;
+export const GET = apiErrorHandler(
+	getOffsetAndLimitFromReq(async (req: NextRequest, { limit, offset }) => {
+		const searchParams = req.nextUrl.searchParams;
+		const q = searchParams.get("q") || "";
 
-	const queryLimit = parseInt(searchParams.get('limit') as string); // Obtenemos el limite y lo convertimos a int
-	const queryOffset = parseInt(searchParams.get('offset') as string); // Obtenemos el offset y lo convertimos a int
-	const q = searchParams.get('q') as string;
+		const list = await getProducts(q, offset, limit);
 
-	const list = await getProducts(q, queryOffset, queryLimit);
+		return NextResponse.json({ list }, { status: 200 });
+	}),
+);
 
-	return NextResponse.json({list}, {status: 200})
-}
+export const POST = apiErrorHandler(async (req: NextRequest) => {
+	await syncProducts();
+
+	return NextResponse.json({ synced: true }, { status: 200 });
+});
