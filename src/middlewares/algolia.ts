@@ -1,5 +1,5 @@
-import { algoliasearch, type SearchResponse } from "algoliasearch";
+import { algoliasearch, type SearchResponse } from "algoliasearch"; // Importamos algolia y sus tipos
 
-const productsClient = algoliasearch('WE56XU3XQG', '89d22e7bf77b7cd04391b4fecc2ba298');
+const productsClient = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_API_KEY); // Inicializamos el cliente
 
-export { productsClient, SearchResponse }
+export { productsClient, SearchResponse } // Y exportamos el cliente y sus tipos
