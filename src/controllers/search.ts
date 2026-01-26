@@ -73,4 +73,24 @@ async function getProducts(q: string, offset: number, limit: number) {
 	}
 }
 
-export { getProducts, syncProducts };
+// Creamos nuestra funcion que obtiene un producto por su id
+async function getProductById(id: string) {
+	try{ // Intenta buscar el producto en el client con getObject
+		const product = await productsClient.getObject({
+			indexName: "products-index",
+			objectID: id // Y el id
+		});
+
+		return product; // Y retorna el producto encontrado
+	} catch (error) {
+		// Si Algolia nos dice explícitamente que no existe (404)
+		if (error.status === 404) {
+			throw new ApiError("product not found", 404);
+		}
+
+		// Para cualquier otro error (red, credenciales, etc.) usamos 500
+		throw new ApiError(error.message, 500);
+	}
+}
+
+export { getProducts, syncProducts, getProductById };

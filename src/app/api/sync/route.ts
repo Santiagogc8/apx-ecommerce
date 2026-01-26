@@ -8,7 +8,7 @@ export const POST = apiErrorHandler(async (req: NextRequest) => {
 
 	if(!authHeader) return NextResponse.json({ error: "authorization was expected" }, { status: 401 });
 
-    // Compartamos el Authorization recibido con el SYNC_SECRET
+    // Comparamos el Authorization recibido con el SYNC_SECRET
     if (authHeader.split(" ")[1] !== process.env.SYNC_SECRET) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); // Si es diferente, tirar error
     }
