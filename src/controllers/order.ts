@@ -80,4 +80,34 @@ async function createOrder(productId: string, userMail: string) {
 	}
 }
 
-export { verifyProduct, createOrder };
+// Creamos una funcion que confirma o rechaza el pago
+async function confirmOrRejectPay(id: string, status: string, items?: Array<any>) {
+    try{
+        await airtableBase("orders").update([ // Intenta updatear la base orders
+            {
+                id, // En el id que recibimos
+                fields: {status} // Y le pasamos la nueva data (el estado)
+            },
+        ]);
+
+        // Si el estado fue rechazado
+        if(status == "rejected"){
+            await Promise.all( // Esperamos una promesa de todo
+                items.map(async (item) => { // Y hacemos un map sobre items
+                    const product = await verifyProduct(item.id); // Donde verificamos el producto
+
+                    await updateProduct(item.id, {stock: (product.stock as number) + 1}); // Y le sumamos 1 (la cantidad que le habiamos quitado antes)
+                })
+            )
+
+            return; // Terminamos la funcion
+        }
+
+        return true; // Si funciono, retornamos un true
+    } catch (error) {
+		// Atrapamos el error enviando una instancia de ApiError con el mensaje de error y un 500
+		throw new ApiError(error.message, 500);
+	}
+}
+
+export { verifyProduct, createOrder, confirmOrRejectPay };

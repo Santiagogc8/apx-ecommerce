@@ -38,7 +38,7 @@ export async function createSingleProductPreference(options: CreatePrefOptions) 
 					unit_price: options.productPrice,
 				},
 			],
-            notification_url: `${BASE_URL}/ipn/mercadopago`, // Esta es la url donde nos avisara el webhook
+            notification_url: `${BASE_URL}/api/ipn/mercadopago`, // Esta es la url donde nos avisara el webhook
 			// URL de redirección en los distintos casos
 			back_urls: {
 				success: "https://" + BASE_URL + "/donate/success",
@@ -49,4 +49,10 @@ export async function createSingleProductPreference(options: CreatePrefOptions) 
 			external_reference: options.transactionId,
 		},
 	});
+}
+
+// Creamos una funcion para verificar si el pago fue hecho
+export async function getPaymentById(id: string) {
+	const payment = new Payment(client); // Creamos una instacia sobre Payment
+	return payment.get({ id }); // Obtenemos el payment y devolvemos el id
 }
