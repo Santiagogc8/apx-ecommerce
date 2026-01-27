@@ -7,8 +7,8 @@ async function syncProducts() {
 	try {
 		// Este intenta esperar una nueva promesa que recibe el res y rej
 		await new Promise((resolve, reject) => {
-			// Seleccionamos la tabla y la seleccionamos. Sobre cada pagina, crea una funcion page que recibe los records y el callback fetchNextPage
-			airtableBase("Furniture")
+			// Especificamos la tabla y la seleccionamos. Sobre cada pagina, crea una funcion page que recibe los records y el callback fetchNextPage
+			airtableBase("products")
 				.select()
 				.eachPage(
 					async function page(records, fetchNextPage) {
@@ -53,7 +53,7 @@ async function getProducts(q: string, offset: number, limit: number) {
 					query: q, // la query recibida
 					hitsPerPage: limit, // Y que nos de el limite recibido como hits por pagina
 					page: Math.floor(offset / limit), // E inicie la pagina sobre el numero mas bajo de la division entre el offset / limit
-					filters: '"In stock" = 1', // Y le decimos que nos devuelva SOLO los resultados que tengan "In stock" true (1 en este caso truthy)
+					filters: 'stock > 0', // Y le decimos que nos devuelva SOLO los resultados que tengan "In stock" true (1 en este caso truthy)
 				},
 			],
 		});
