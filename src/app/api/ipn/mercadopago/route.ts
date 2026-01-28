@@ -15,10 +15,10 @@ export const POST = apiErrorHandler(async (req: NextRequest) => {
 		const purchaseId = mpPayment.external_reference; // Y le extrae el external_reference
 
 		if(mpPayment.status === "approved"){ // Si el pago fue aprobado, 
-			await confirmOrRejectPay(purchaseId, mpPayment.status); // Ejecuta un confirmOrRejectPay
+			await confirmOrRejectPay(purchaseId, mpPayment.status, mpPayment.id.toString()); // Ejecuta un confirmOrRejectPay
 			return NextResponse.json({status: mpPayment.status}) // Y responde con el estado
 		} else if(mpPayment.status === "rejected"){ // En caso de haber sido rechazado
-			await confirmOrRejectPay(purchaseId, mpPayment.status, mpPayment.additional_info.items); // Tambien le pasamos los items (para que pueda restaurar los stock)
+			await confirmOrRejectPay(purchaseId, mpPayment.status, mpPayment.id.toString(), mpPayment.additional_info.items); // Tambien le pasamos los items (para que pueda restaurar los stock)
 			return NextResponse.json({status: mpPayment.status}); // Y responde con el status
 		}
 	}

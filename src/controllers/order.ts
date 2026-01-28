@@ -52,7 +52,7 @@ async function createOrder(productId: string, userMail: string) {
                     client: userMail,
                     status: "pending",
                     total: product.unit_cost,
-                    id_mercadopago: "id de prueba",
+                    id_mercadopago: "",
                     product: [productId] // Y le decimos que el productId es un registro de otra tabla
                 }
             }
@@ -81,12 +81,12 @@ async function createOrder(productId: string, userMail: string) {
 }
 
 // Creamos una funcion que confirma o rechaza el pago
-async function confirmOrRejectPay(id: string, status: string, items?: Array<any>) {
+async function confirmOrRejectPay(id: string, status: string, mpId: string, items?: Array<any>) {
     try{
         await airtableBase("orders").update([ // Intenta updatear la base orders
             {
                 id, // En el id que recibimos
-                fields: {status} // Y le pasamos la nueva data (el estado)
+                fields: {status, id_mercadopago: mpId} // Y le pasamos la nueva data (el estado y el id de pago)
             },
         ]);
 
@@ -110,4 +110,36 @@ async function confirmOrRejectPay(id: string, status: string, items?: Array<any>
 	}
 }
 
-export { verifyProduct, createOrder, confirmOrRejectPay };
+// Creamos una funcion para obtener ordenes por medio de email
+async function getMyOrders(email: string) {
+    try {
+        // Intenta buscar en la tabla orders
+        const orders = await airtableBase("orders").select({
+            filterByFormula: `{client} = '${email}'` // Las que coincidan con la fila clients y tengan el valor de email
+        }).all(); // Y las pide todas
+
+        return orders.map(order => ({ // Retorna un objeto ordando por cada orden obtenida
+            id: order.id,
+            ...order.fields
+        }));
+    } catch (error) {
+		// Atrapamos el error enviando una instancia de ApiError con el mensaje de error y un 500
+		throw new ApiError(error.message, 500);
+	}
+}
+
+// La funcion getOrderById recibe un id
+async function getOrderById(orderId: string) {
+    try {
+        // Busca por el id recibido en la tabla orders
+        const order = await airtableBase("orders").find(orderId);
+        return order.fields; // Retorna el fields de la order
+    } catch (error) {
+        if (error.statusCode === 404) // Si hubo un error de 404, tiramos error
+			throw new ApiError(error.message, error.statusCode);
+		// Atrapamos el error enviando una instancia de ApiError con el mensaje de error y un 500
+		throw new ApiError(error.message, 500);
+	}
+}
+
+export { verifyProduct, createOrder, confirmOrRejectPay, getMyOrders, getOrderById };
