@@ -2,7 +2,7 @@ import { PrimaryBtn } from "src/ui/PrimaryBtn";
 
 export function Header() {
 	return (
-		<header className="sticky top-0 z-50 w-[95%] mx-auto p-5 rounded-b-3xl border-white/10 bg-zinc-900/60 backdrop-blur-xs backdrop-saturate-200 shadow-[0px_3px_10px_rgba(0,0,0,0.4)] flex justify-between items-center mb-5">
+		<header className="fixed top-3 left-1/2 -translate-x-1/2 z-50 w-[95%] p-5 rounded-3xl border border-white/10 bg-neutral-900/10 backdrop-blur-md backdrop-saturate-200 shadow-[0px_3px_10px_rgba(0,0,0,0.4)] flex justify-between items-center mb-5">
 			<p className="font-medium text-white text-xl">Localhost</p>
 			<PrimaryBtn>
 				<div className="relative overflow-hidden">

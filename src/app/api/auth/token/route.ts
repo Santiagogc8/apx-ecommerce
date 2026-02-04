@@ -4,6 +4,7 @@
 import { NextResponse } from "next/server";
 import { verifyAuth } from "src/controllers/auth";
 import { apiErrorHandler } from "src/middlewares/apiErrorHandler";
+import { cookies } from 'next/headers'; // Para setear cookies del lado del servidor
 import { z } from "zod"
 
 // Creamos un loginSchema con zod
@@ -26,6 +27,14 @@ export const POST = apiErrorHandler(async (req: Request) => {
 
     // E intentamos verificar el auth con el email y el codigo recibido
     const token = await verifyAuth(email, code);
+
+    (await cookies()).set('ecommerce-token', token, {
+        httpOnly: true, // 🔒 Nadie puede leerla con JS
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'lax',
+        maxAge: 604800, // 7 días
+        path: '/'
+    })
 
     // Retornamos el token con un status 200
     return NextResponse.json({ token }, { status: 200 });
