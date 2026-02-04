@@ -3,7 +3,7 @@ import "./globals.css";
 import { Header } from "src/components/Header";
 
 export const metadata: Metadata = {
-    title: "APX Ecommerce",
+    title: "Localhost",
     description: "Desafio final de APX by Santiago Guzman",
     creator: "Santiago Guzman"
 }
@@ -15,9 +15,9 @@ export default function DashboardLayout({
 }) {
 	return (
 		<html lang="es">
-			<body>
+			<body className="bg-black font-display">
 				<Header/>
-				<main>{children}</main>
+				<main className="md:px-20">{children}</main>
 			</body>
 		</html>
 	);
