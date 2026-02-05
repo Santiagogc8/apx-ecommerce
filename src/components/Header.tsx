@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useMe } from "../lib/hooks";
 
 export function Header() {
-	const { user, isLoading } = useMe();
+	const { user, error, isLoading, mutate } = useMe();
 
 	// Creamos una funcion de retorno temprano (early return)
 	const renderAuthContent = () => {
 		// Valida si isLoading es true y rita un Skeleton en caso afirmativo
 		if (isLoading) return <Skeleton customClasses="h-5 w-40"/>;
 
-		if (user) { // SI tenemos un userm mostramos el email en el header
+		if (user && !error) { // SI tenemos un userm mostramos el email en el header
 			return <p className="text-sm">{user?.email}</p>
 		}
 

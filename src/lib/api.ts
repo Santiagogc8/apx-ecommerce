@@ -7,14 +7,16 @@ export async function fetchApi(route: string, options: RequestInit = {}) {
         credentials: "same-origin"
 	});
 
-	if (!res.ok) {
-        if (res.status === 401) {
-            window.location.href = "/logout"
-        }
-        throw res.status;
+    const data = await res.json(); // Guardamos la data en json
+
+    if (!res.ok) {
+        // Lanzamos un error con la data (que suele traer el mensaje de error)
+        // y el status para que SWR sepa qué pasó
+        const error = new Error(data.message || "Error en la petición");
+        (error as any).status = res.status;
+        throw error;
     }
 
-	const data = await res.json(); // Guardamos la data en json
 
 	return data; // Y retornamos la data
 }

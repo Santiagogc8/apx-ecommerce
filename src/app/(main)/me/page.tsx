@@ -15,20 +15,22 @@ export default function MePage(){
             )
         }
 
-        if(error){
-            return(
-                <>
-                    <p>Ocurrio un error al cargar la data</p>
-                    <p>{error}</p>
-                </>
+        if(user){
+            return (
+                <div>
+                    <h3 className="text-3xl text-center">Bienvenido de nuevo {user?.email}</h3>
+                </div>
             )
         }
 
-        return (
-            <div>
-                <h3 className="text-3xl text-center">Bienvenido de nuevo {user?.email}</h3>
-            </div>
-        )
+        // Si no hay usuario y ya no está cargando, entonces sí hay un error real ❌
+        if (error) {
+            return (
+                <p>Ocurrio un error al cargar la data. Por favor intenta recargar la pagina o ingresar de nuevo</p>
+            );
+        }
+
+    return null;
     }
 
     return (

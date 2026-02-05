@@ -2,20 +2,25 @@
 import { useState } from "react";
 import { sendCode, getToken } from "src/lib/api";
 import { useRouter } from 'next/navigation';
+import { useMe } from "../lib/hooks";
 
 export function Login(){
     const [email, setEmail] = useState("");
     const [codeSent, setCodeSent] = useState(false);
     const [code, setCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { mutate } = useMe();
 
     const handleSendCode = async () => {
         // Validación básica de email antes de "enviar"
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (emailRegex.test(email)) {
+            setIsLoading(true);
             await sendCode(email);
-            setCodeSent(true); 
+            setCodeSent(true);
+            setIsLoading(false);
         } else {
             alert("Por favor, ingresa un correo válido.");
         }
@@ -26,9 +31,11 @@ export function Login(){
 
         if(code.length == 6){
             try{
+                setIsLoading(true);
                 const res = await getToken(email, code);
 
                 if(res){
+                    await mutate();
                     router.push('/me');
                 }
             } catch(error){
@@ -119,14 +126,14 @@ export function Login(){
                     </div>
                 </div>
                 {codeSent && !code && <p className="text-center text-emerald-500 font-semibold">Codigo enviado al correo electronico</p>}
-                <button type="button" onClick={handleSendCode} className={`relative w-full group mt-2 cursor-pointer ${codeSent ? "hidden" : "inline-block"}`}>
+                <button type="button" disabled={isLoading} onClick={handleSendCode} className={`relative w-full group mt-2 cursor-pointer ${codeSent ? "hidden" : "inline-block"} ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
                     <span className="absolute top-0 left-0 w-full h-full transition-all duration-200 ease-out transform translate-x-1.5 translate-y-1.5 bg-blue-600 dark:bg-orange-400 border-2 border-zinc-900 dark:border-white group-hover:translate-x-0 group-hover:translate-y-0" />
                     <span className="relative block w-full px-5 py-3.5 text-sm font-bold tracking-widest uppercase border-2 border-zinc-900 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white dark:border-white">
                         Confirmar correo
                     </span>
                 </button>
-                <button type="submit" className={`relative w-full group mt-2 cursor-pointer ${codeSent ? "inline-block" : "hidden"}`}>
-                    <span className="absolute top-0 left-0 w-full h-full transition-all duration-200 ease-out transform translate-x-1.5 translate-y-1.5 bg-blue-600 dark:bg-yellow-400 border-2 border-zinc-900 dark:border-white group-hover:translate-x-0 group-hover:translate-y-0" />
+                <button type="submit" disabled={isLoading} className={`relative w-full group mt-2 cursor-pointer ${codeSent ? "inline-block" : "hidden"} ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
+                    <span className="absolute top-0 left-0 w-full h-full transition-all duration-200 ease-out transform translate-x-1.5 translate-y-1.5 bg-blue-600 dark:bg-orange-400 border-2 border-zinc-900 dark:border-white group-hover:translate-x-0 group-hover:translate-y-0" />
                     <span className="relative block w-full px-5 py-3.5 text-sm font-bold tracking-widest uppercase border-2 border-zinc-900 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white dark:border-white">
                         Ingresar
                     </span>
