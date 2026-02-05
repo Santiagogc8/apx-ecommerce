@@ -5,7 +5,11 @@ import { fetchApi } from "./api"; // E importamos nuestro fetchApi
 export function useMe(){
     // Le decimos a useSWR que su id es /me y llamamos el fetcher (este solo hace GET, no hace POST por hook)
     // useSWR pide la data cada vez que el usuario recarga, cambia de pestaña o recupera la conexion
-    const { data, error, isLoading, mutate } = useSWR("/me", fetchApi);
+    const { data, error, isLoading, mutate } = useSWR("/me", fetchApi, {
+        revalidateOnFocus: false, // Evita llamadas al cambiar de pestaña
+        shouldRetryOnError: false, // Si falla una vez (ej: no hay token), no sigue intentando
+        dedupingInterval: 10000, // Durante 10 segundos, ignora peticiones repetidas al mismo endpoint
+    });
 
     return {
         user: data?.user,
