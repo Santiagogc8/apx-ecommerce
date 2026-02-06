@@ -107,29 +107,34 @@ export function Header() {
 						</div>
 
 						<nav className="flex-1 flex flex-col gap-6 text-white">
-							<p className="text-gray-400 text-xs uppercase tracking-widest">
-								Usuario
-							</p>
-							<p className="text-lg font-medium border-b border-white/10 pb-4">
-								{user?.email}
-							</p>
-							<Link
-								href="/me"
-								className="hover:text-blue-400 transition-colors"
-							>
-								Mi Perfil
-							</Link>
-						</nav>
+                            {user && (
+                                <>
+                                    <p className="text-gray-400 text-xs uppercase tracking-widest">
+                                        Usuario
+                                    </p>
+                                    <p className="text-lg font-medium border-b border-white/10 pb-4">
+                                        {user.email}
+                                    </p>
+                                    <Link
+                                        href="/me"
+                                        className="hover:text-blue-400 transition-colors"
+                                    >
+                                        Mi Perfil
+                                    </Link>
+                                </>
+                            )}
+                        </nav>
 
-						<div className="flex flex-col justify-center">
-							<p className="text-center">{user?.email}</p>
-							
-							<button 
-								onClick={() => setShowConfirm(true)} 
-								className=" text-rose-800 hover:scale-105 transition-transform cursor-pointer">
-								Cerrar sesión
-							</button>
-						</div>
+						{user && (
+                            <div className="flex flex-col justify-center">
+                                <p className="text-center mb-4 text-sm">{user.email}</p>
+                                <button 
+                                    onClick={() => setShowConfirm(true)} 
+                                    className="text-rose-800 hover:scale-105 transition-transform cursor-pointer">
+                                    Cerrar sesión
+                                </button>
+                            </div>
+                        )}
 					</div>
 				</>,
 				document.body,

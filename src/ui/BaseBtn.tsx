@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 export type CustomBtnProps = {
 	children: ReactNode;
 	handleClick?: React.MouseEventHandler;
-	type?: "button" | "submit";
+	type?: "button" | "submit" | "reset";
     disabled?: true | false;
 	className?: string;
 };
