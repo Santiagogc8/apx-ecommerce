@@ -10,11 +10,6 @@ export default function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // No permitimos que el usuario pueda entrar a traves de la url. Solo podria entrar a traves de acciones con botones
-    if (pathname === '/logout' && request.method === 'GET') {
-        return NextResponse.redirect(new URL('/', request.url));
-    }
-
     // Protección de rutas privadas
     const protectedRoutes = ['/me'];
     
@@ -29,5 +24,5 @@ export default function middleware(request: NextRequest) {
 
 // Controla en qué rutas se ejecuta el middleware
 export const config = {
-    matcher: ['/me/:path*', '/logout', '/login'],
+    matcher: ['/me/:path*', '/login'],
 }

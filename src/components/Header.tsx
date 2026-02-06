@@ -6,16 +6,49 @@ import { useMe } from "../lib/hooks";
 import { BurguerMenu, CloseMenu } from "../ui/Icons";
 import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
-import { ConfirmModal } from "../ui/ConfirmModal";
+import { ConfirmModal } from "../ui/Modals";
+import { useRouter, usePathname } from "next/navigation";
+import { fetchApi } from "../lib/api";
 
 export function Header() {
-	const { user, error, isLoading } = useMe();
+	const { user, error, isLoading, mutate } = useMe();
 	const [isOpen, setIsOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
+	const router = useRouter();
+	const pathname = usePathname();
 
 	useEffect(() => {
         setMounted(true);
     }, []);
+
+	useEffect(() => {
+		setIsOpen(false);
+	}, [pathname]);
+
+	// Esta es la función "padre" que controla todo el proceso
+    const handleLogout = async () => {
+        // Cerramos modal y menú para feedback visual inmediato
+        setShowConfirm(false);
+        setIsOpen(false);
+        
+		try {
+			// Llamamos a la API para matar la sesión en el servidor/navegador
+			await fetchApi('/auth/logout', {
+				method: 'POST'
+			});
+
+			// Le decimos a SWR "¡Hey, revisa de nuevo!"
+			// Como la cookie ya no está, SWR recibirá un error/null y actualizará el estado user
+			await mutate(null); // Pasarle 'null' actualiza el dato localmente más rápido
+
+			// Si el usuario estaba en '/me', lo mandamos al home
+			router.push('/'); 
+			
+		} catch (error) {
+			console.error("Error al cerrar sesión", error);
+		}
+    };
 
 	// Creamos una funcion de retorno temprano (early return)
 	const renderAuthContent = () => {
@@ -88,16 +121,26 @@ export function Header() {
 							</Link>
 						</nav>
 
-						<div>
+						<div className="flex flex-col justify-center">
 							<p className="text-center">{user?.email}</p>
-							<Link href='/logout'>
-								<p className="text-center text-rose-800">Cerrar sesión</p>
-							</Link>
+							
+							<button 
+								onClick={() => setShowConfirm(true)} 
+								className=" text-rose-800 hover:scale-105 transition-transform cursor-pointer">
+								Cerrar sesión
+							</button>
 						</div>
 					</div>
 				</>,
 				document.body,
 			)}
+			{showConfirm && (
+                <ConfirmModal 
+					text="Estas a punto de cerrar sesion. Estas seguro de esto?"
+                    onConfirm={handleLogout} 
+                    onCancel={() => setShowConfirm(false)}
+                />
+            )}
 		</header>
 	);
 }

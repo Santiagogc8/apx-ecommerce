@@ -6,8 +6,8 @@ type IconOptions = {
 };
 
 export function BurguerMenu({
-	width = "32",
-	height = "32",
+	width = "28",
+	height = "28",
 	stroke = "#ffffff",
 }: IconOptions) {
 	return (
@@ -30,8 +30,8 @@ export function BurguerMenu({
 }
 
 export function CloseMenu({
-	width = "32",
-	height = "32",
+	width = "28",
+	height = "28",
 	fill = "#ffffff",
 }: IconOptions) {
 	return (
