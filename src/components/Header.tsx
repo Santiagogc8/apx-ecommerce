@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { ConfirmModal } from "../ui/Modals";
 import { useRouter, usePathname } from "next/navigation";
 import { fetchApi } from "../lib/api";
+import { SearchInput } from "../ui/SearchInput";
 
 export function Header() {
 	const { user, error, isLoading, mutate } = useMe();
@@ -58,9 +59,14 @@ export function Header() {
 		if (user && !error) {
 			// SI tenemos un user mostramos el email en el header
 			return (
-				<button className="cursor-pointer hover:scale-110 transition-transform" onClick={() => setIsOpen(true)}>
-					<BurguerMenu />
-				</button>
+				<div className="flex gap-4 items-center">
+					<div className="hidden md:block md:h-fit">
+						<SearchInput />
+					</div>
+					<button className="cursor-pointer hover:scale-110 transition-transform" onClick={() => setIsOpen(true)}>
+						<BurguerMenu />
+					</button>
+				</div>
 			);
 		}
 
@@ -107,6 +113,9 @@ export function Header() {
 						</div>
 
 						<nav className="flex-1 flex flex-col gap-6 text-white">
+							<div className="md:hidden">
+								<SearchInput />
+							</div>
                             {user && (
                                 <>
                                     <p className="text-gray-400 text-xs uppercase tracking-widest">
@@ -117,7 +126,7 @@ export function Header() {
                                     </p>
                                     <Link
                                         href="/me"
-                                        className="hover:text-blue-400 transition-colors"
+                                        className="hover:text-blue-400 transition-colors w-fit"
                                     >
                                         Mi Perfil
                                     </Link>
@@ -127,7 +136,6 @@ export function Header() {
 
 						{user && (
                             <div className="flex flex-col justify-center">
-                                <p className="text-center mb-4 text-sm">{user.email}</p>
                                 <button 
                                     onClick={() => setShowConfirm(true)} 
                                     className="text-rose-800 hover:scale-105 transition-transform cursor-pointer">
