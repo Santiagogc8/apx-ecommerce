@@ -1,5 +1,6 @@
 import useSWR from 'swr'; // Importamos el hook de useSWR
 import { fetchApi } from "./api"; // E importamos nuestro fetchApi
+import { useState, useEffect } from 'react';
 
 // Creamos y exportamos nuestra funcion useMe (tiene que ser sincrona)
 export function useMe(){
@@ -17,4 +18,29 @@ export function useMe(){
         isLoading, 
         mutate
     }; // Retornamos la informacion, errores, cargas y mutaciones
+}
+
+export function useProducts(q: string){
+    const [products, setProducts] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError]= useState<boolean | any>(false);
+
+    useEffect(() => {
+        try {
+            setIsLoading(true);
+
+            fetchApi(`/search?q=${q}`)
+                .then(res => setProducts(res));
+
+            setIsLoading(false)
+        } catch(error){
+            setIsError(error.message);
+        }
+    }, [q]);
+
+    return {
+        isLoading,
+        isError,
+        products
+    }
 }
