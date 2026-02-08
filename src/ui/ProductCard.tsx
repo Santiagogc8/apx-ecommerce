@@ -1,7 +1,7 @@
 type ProductOptions = {
     name: string;
     price: string;
-    images: any[];
+    imageUrl: string;
     id: string;
 }
 
@@ -10,14 +10,22 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
     maximumFractionDigits: 0,
 });
 
-export function ProductCard({name, price, images}: ProductOptions){
+export function ProductCard({name, price, imageUrl}: ProductOptions){
     return (
-        <div className="flex flex-col items-center justify-center w-50 p-4 border border-amber-300">
-            {images.map((image, i) => {
-                return <img src={image.url} alt={`${name}-image-${i}`} key={i} />
-            })}
-            <p>{name}</p>
-            <p>$ {priceFormatter.format(+price)}</p>
+        <div className="w-50 grid grid-cols-[auto_auto] grid-rows-[1fr_min-content]">
+            <div className="p-3 row-span-2">
+                <p className="uppercase font-bold tracking-widest [writing-mode:vertical-lr] rotate-180">{name}</p>
+            </div>
+            <div className="self-center">
+                <img 
+                    className="transform w-200 px-4 scale-x-[-1] rotate-20 drop-shadow-xl hover:rotate-0 transition-transform duration-300" 
+                    src={imageUrl} 
+                    alt={name} 
+                />
+            </div>
+            <div className="self-center justify-self-center">
+                <p className="text-amber-600 font-bold text-xl">$ {priceFormatter.format(+price)}</p>
+            </div>
         </div>
     )
 }
