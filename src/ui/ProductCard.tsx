@@ -2,7 +2,6 @@ type ProductOptions = {
     name: string;
     price: string;
     imageUrl: string;
-    id: string;
 }
 
 const priceFormatter = new Intl.NumberFormat('es-ES', {
@@ -12,9 +11,9 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
 
 export function ProductCard({name, price, imageUrl}: ProductOptions){
     return (
-        <div className="w-50 grid grid-cols-[auto_auto] grid-rows-[1fr_min-content]">
+        <div className="w-50 h-60 grid grid-cols-[auto_auto] grid-rows-[1fr_min-content]">
             <div className="p-3 row-span-2">
-                <p className="uppercase font-bold tracking-widest [writing-mode:vertical-lr] rotate-180">{name}</p>
+                <p className="uppercase font-bold tracking-widest [writing-mode:vertical-rl] rotate-180 truncate">{name}</p>
             </div>
             <div className="self-center">
                 <img 
