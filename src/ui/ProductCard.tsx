@@ -18,13 +18,13 @@ export function ProductCard({name, price, imageUrl}: ProductOptions){
             </div>
             <div className="self-center">
                 <img 
-                    className="transform w-200 px-4 scale-x-[-1] rotate-20 drop-shadow-xl hover:rotate-0 transition-transform duration-300" 
+                    className="px-4 rotate-20 hover:rotate-0 transition-transform duration-300" 
                     src={imageUrl} 
-                    alt={name} 
+                    alt={name + ' - image'} 
                 />
             </div>
             <div className="self-center justify-self-center">
-                <p className="text-amber-600 font-bold text-xl">$ {priceFormatter.format(+price)}</p>
+                <p className="text-amber-600 font-bold text-lg">$ {priceFormatter.format(+price)}</p>
             </div>
         </div>
     )
