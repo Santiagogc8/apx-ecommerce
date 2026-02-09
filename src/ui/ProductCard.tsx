@@ -18,7 +18,7 @@ export function ProductCard({name, price, imageUrl}: ProductOptions){
             </div>
             <div className="self-center">
                 <img 
-                    className="px-4 rotate-20 hover:rotate-0 transition-transform duration-300" 
+                    className="px-4 -rotate-20 hover:rotate-0 transition-transform duration-300" 
                     src={imageUrl} 
                     alt={name + ' - image'} 
                 />

@@ -18,7 +18,7 @@ export default function SearchPage(){
             {isLoading && <p>Estoy cargando los productos</p>}
             {products && (
                 <div>
-                    {products.list?.results?.map(product => <ProductCard imageUrl={product.images[0].url} name={product.name} price={product.unit_cost} key={product.objectID} id={product.objectID} />)}
+                    {products.list?.results?.map(product => <ProductCard imageUrl={product.images[0]} name={product.name} price={product.unit_cost} key={product.objectID} id={product.objectID} />)}
                 </div>
             )}
         </div>

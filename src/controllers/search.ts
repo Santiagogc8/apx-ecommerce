@@ -1,45 +1,71 @@
 import { ApiError } from "src/models/apiError";
 import { airtableBase } from "../lib/airtable";
 import { productsClient, SearchResponse } from "src/middlewares/algolia";
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const slugify = (text: any) => {
+    return String(text)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+};
 
 // Creamos la funcion que usaremos para sincronizar los productos de airtable a algolia (webhook con cron job)
 async function syncProducts() {
-	try {
-		// Este intenta esperar una nueva promesa que recibe el res y rej
-		await new Promise((resolve, reject) => {
-			// Especificamos la tabla y la seleccionamos. Sobre cada pagina, crea una funcion page que recibe los records y el callback fetchNextPage
-			airtableBase("products")
-				.select()
-				.eachPage(
-					async function page(records, fetchNextPage) {
-						const algoliaRecords = records.map((record) => {
-							// Sobre los records de la pagina hace un map donde por cada record
-							return {
-								// Retornamos un objeto donde
-								objectID: record.id, // Guardamos el id como objectID
-								...record.fields, // Y le pasamos el resto de los fields
-							};
-						});
+    try {
+        await new Promise((resolve, reject) => {
+            airtableBase("products")
+                .select()
+                .eachPage(
+                    async function page(records, fetchNextPage) {
+                        const algoliaRecords = await Promise.all(records.map(async (record) => {
+                            const fields = record.fields;
 
-						// Luego esperamos el saveObjects donde guardamos los objetos de algoliaRecords al numero de indice indexName
-						await productsClient.saveObjects({
-							indexName: "products-index",
-							objects: algoliaRecords,
-						});
+                            const productName = fields.name ? String(fields.name) : 'unnamed-product';
+                            const folderPath = `products/${slugify(productName)}`;
 
-						fetchNextPage(); // Al terminar con todos los productos de una pagina, pasa a la siguiente
-					},
-					function done(err) {
-						// Luego evaluamos si quedo bien
-						if (err) reject(err); // Si hubo un error, rechazamos la promesa
-						resolve(true); // Si no, resolvemos la promesa con un true
-					},
-				);
-		});
-	} catch (error) {
-		// Atrapamos el error enviando una instancia de ApiError con el mensaje de error y un 500
-		throw new ApiError(error.message, 500);
-	}
+                            const airtableImages = (fields.images as any[]) || [];
+
+                            const uploadedImagesUrls = await Promise.all(
+                                airtableImages.map(async (img, index) => {
+                                    const uploadRes = await cloudinary.uploader.upload(img.url, {
+                                        folder: folderPath,
+                                        public_id: `image_${index.toString()}`, 
+                                        overwrite: true,
+                                    });
+                                    return uploadRes.secure_url;
+                                })
+                            );
+
+                            return {
+                                objectID: record.id,
+                                ...fields,
+                                images: uploadedImagesUrls, 
+                            };
+                        }));
+
+                        await productsClient.saveObjects({
+                            indexName: "products-index",
+                            objects: algoliaRecords,
+                        });
+
+                        fetchNextPage();
+                    },
+                    function done(err) {
+                        if (err) reject(err);
+                        resolve(true);
+                    },
+                );
+        });
+    } catch (error) {
+        throw new ApiError(error.message, 500);
+    }
 }
 
 // Para la funcion de getProducts recibimos el q, el offset y el limit
