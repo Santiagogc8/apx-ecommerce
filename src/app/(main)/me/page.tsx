@@ -124,8 +124,8 @@ export default function MePage() {
     if (isLoading) {
         return (
             <div className="min-h-screen pt-30 flex flex-col items-center gap-6 px-4">
-                <Skeleton customClasses="w-48 h-8 rounded-md" />
-                <Skeleton customClasses="w-full max-w-2xl h-[500px] rounded-2xl"/>
+                <Skeleton customClasses="w-48 h-8" />
+                <Skeleton customClasses="w-full max-w-2xl h-[500px]"/>
             </div>
         );
     }

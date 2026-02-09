@@ -1,3 +1,6 @@
+import { BuyIcon } from "@/src/ui/Icons";
+import { useState, useEffect } from 'react';
+
 type ProductOptions = {
     name: string;
     price: string;
@@ -10,20 +13,47 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
 });
 
 export function ProductCard({name, price, imageUrl}: ProductOptions){
+    const [isZoomed, setIsZoomed] = useState(false);
+
+    useEffect(() => {
+        if (isZoomed) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => { document.body.style.overflow = 'unset'; }
+    }, [isZoomed]);
+
     return (
-        <div className="w-50 h-60 grid grid-cols-[auto_auto] grid-rows-[1fr_min-content]">
-            <div className="p-3 row-span-2">
-                <p className="uppercase font-bold tracking-widest [writing-mode:vertical-rl] rotate-180 truncate">{name}</p>
+        <div className="w-80 h-80 grid grid-cols-[min-content_auto] grid-rows-[1fr_min-content] bg-orange-100 text-orange-100 rounded-2xl overflow-hidden md:w-100 md:h-100">
+            <div className="p-1.5 row-span-2 bg-neutral-900 h-full flex items-center justify-center md:p-3">
+                <p className="uppercase font-bold [writing-mode:vertical-rl] rotate-180 text-center tracking-wider md:text-xl leading-tight">
+                    {name}
+                </p>
             </div>
-            <div className="self-center">
+
+            {isZoomed && (
+                <div 
+                    onClick={() => setIsZoomed(false)}
+                    className="fixed inset-0 bg-black/40 backdrop-blur-md z-20 transition-opacity duration-300 animate-in fade-in"
+                />
+            )}
+
+            <div className="self-center flex justify-center">
                 <img 
-                    className="px-4 -rotate-20 hover:rotate-0 transition-transform duration-300" 
+                    onClick={() => setIsZoomed(!isZoomed)}
+                    className={`transition-all duration-400 cursor-zoom-in
+                        ${isZoomed 
+                            ? "fixed inset-0 m-auto z-30 cursor-zoom-out rotate-0 w-auto md:h-[70vh]" 
+                            : "px-4 -rotate-12 hover:rotate-0 scale-100"
+                        }`} 
                     src={imageUrl} 
-                    alt={name + ' - image'} 
+                    alt={name} 
                 />
             </div>
-            <div className="self-center justify-self-center">
-                <p className="text-amber-600 font-bold text-lg">$ {priceFormatter.format(+price)}</p>
+            <div className="self-center justify-self-center w-full py-3 px-5 flex items-center gap-3">
+                <p className="font-bold text-xl text-center text-black flex-1">$ {priceFormatter.format(+price)}</p>
+                <BuyIcon fill="#000" />
             </div>
         </div>
     )
