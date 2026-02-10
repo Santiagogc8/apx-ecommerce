@@ -7,7 +7,7 @@ import { BurguerMenu, CloseMenu } from "../ui/Icons";
 import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
 import { ConfirmModal } from "../ui/Modals";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { fetchApi } from "../lib/api";
 import { SearchInput } from "../ui/SearchInput";
 
@@ -18,6 +18,7 @@ export function Header() {
 	const [showConfirm, setShowConfirm] = useState(false);
 	const router = useRouter();
 	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
 	useEffect(() => {
         setMounted(true);
@@ -25,7 +26,7 @@ export function Header() {
 
 	useEffect(() => {
 		setIsOpen(false);
-	}, [pathname]);
+	}, [pathname, searchParams]);
 
 	// Esta es la función "padre" que controla todo el proceso
     const handleLogout = async () => {

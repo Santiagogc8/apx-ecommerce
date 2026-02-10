@@ -26,8 +26,14 @@ export function SearchInput() {
 	const handleSearchSubmit = (e) => {
 		e.preventDefault();
 
+		setTimeout(() => {
+			setQuery('');
+			inputRef.current?.blur();
+		}, 0);
+
         if (query.trim()) {
             router.push(`/search?q=${encodeURIComponent(query.toLowerCase())}`);
+			setShowInput(false);
         }
 	};
 

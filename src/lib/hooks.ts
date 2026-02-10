@@ -22,13 +22,11 @@ export function useMe(){
 
 export function useProducts(q: string){
     const [products, setProducts] = useState<any>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError]= useState<boolean | any>(false);
 
     useEffect(() => {
         try {
-            setIsLoading(true);
-
             fetchApi(`/search?q=${q}`)
                 .then(res => setProducts(res));
 
