@@ -1,5 +1,6 @@
-import { BuyIcon } from "@/src/ui/Icons";
+import { BuyIcon, MoreInfo } from "@/src/ui/Icons";
 import { useState, useEffect } from 'react';
+import Link from "next/link";
 
 type ProductOptions = {
     name: string;
@@ -52,8 +53,13 @@ export function ProductCard({name, price, imageUrl}: ProductOptions){
                 />
             </div>
             <div className="self-center justify-self-center w-full py-3 px-5 flex items-center gap-3">
+                <Link href={'#'}>
+                    <MoreInfo stroke="#000" />
+                </Link>
                 <p className="font-bold text-xl text-center text-black flex-1">$ {priceFormatter.format(+price)}</p>
-                <BuyIcon fill="#000" />
+                <Link href={'#'}>
+                    <BuyIcon fill="#000" />
+                </Link>
             </div>
         </div>
     )

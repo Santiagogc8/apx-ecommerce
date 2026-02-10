@@ -80,3 +80,25 @@ export function BuyIcon({ width = "23", height = "23", fill = "#ffffff" }) {
 		</svg>
 	);
 }
+
+export function MoreInfo({ width = "23", height = "23", stroke = "#ffffff" }) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={width}
+			height={height}
+			viewBox="0 0 14 14"
+		>
+			<g
+				fill="none"
+				stroke={stroke}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			>
+				<circle cx="7" cy="7" r="6.5" />
+				<path d="M7 7v3.5" />
+				<circle cx="7" cy="4.5" r=".5" />
+			</g>
+		</svg>
+	);
+}
