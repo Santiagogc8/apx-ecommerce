@@ -4,7 +4,7 @@ import { sendCode, getToken } from "src/lib/api";
 import { useRouter } from 'next/navigation';
 import { useMe } from "../lib/hooks";
 
-export function Login(){
+export function Login({redirectTo}: {redirectTo?: string}){
     const [email, setEmail] = useState("");
     const [codeSent, setCodeSent] = useState(false);
     const [code, setCode] = useState("");
@@ -36,7 +36,7 @@ export function Login(){
 
                 if(res){
                     await mutate();
-                    router.push('/me');
+                    router.push(redirectTo || '/me');
                 }
             } catch(error){
                 alert("El codigo es invalido");
