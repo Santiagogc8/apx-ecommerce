@@ -1,6 +1,10 @@
 // Creamos la funcion fetchApi que recibe una ruta (como /me) y unas options de tipo RequestInit (tipicas del fetch)
 export async function fetchApi(route: string, options: RequestInit = {}) {
-    const baseUrl = typeof window === 'undefined' ? (process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000") : "";
+    const base = process.env.NEXT_PUBLIC_VERCEL_URL 
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+        : "http://localhost:3000";
+
+    const baseUrl = typeof window === 'undefined' ? base : "";
 
     // Hacemos el fetch con la ruta recibida
 	const res = await fetch(baseUrl + "/api" + route, {
