@@ -51,11 +51,11 @@ export function ProductGallery({ gallery }: { gallery: Array<string> }) {
 					className="fixed inset-0 bg-black/40 backdrop-blur-md z-20 transition-opacity duration-300 animate-in fade-in"
 				/>
 			)}
-			<div className="bg-orange-100 p-4 rounded-xl min-h-65 flex justify-center items-center md:min-h-110">
+			<div className="bg-orange-100 p-4 rounded-xl flex justify-center items-center h-[50vh] md:h-[60vh] max-h-150 w-full">
 				<img
 					onClick={() => setIsZoomed(!isZoomed)}
 					src={gallery[currentImage]}
-					className={`cursor-zoom-in object-contain ${isZoomed ? "fixed inset-0 m-auto z-30 cursor-zoom-out w-auto md:h-[70vh] object-contain max-w-[90%]" : "scale-100"}`}
+					className={`cursor-zoom-in object-contain ${isZoomed ? "fixed inset-0 m-auto z-30 cursor-zoom-out w-auto md:h-[70vh] object-contain max-w-[90%]" : "w-full h-full"}`}
 					alt="thumbnail main"
 				/>
 			</div>

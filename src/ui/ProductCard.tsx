@@ -1,3 +1,4 @@
+"use client"
 import { BuyIcon, MoreInfo } from "@/src/ui/Icons";
 import { useState, useEffect } from 'react';
 import Link from "next/link";

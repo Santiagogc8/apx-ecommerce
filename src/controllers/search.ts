@@ -2,6 +2,7 @@ import { ApiError } from "src/models/apiError";
 import { airtableBase } from "../lib/airtable";
 import { productsClient, SearchResponse } from "src/middlewares/algolia";
 import { v2 as cloudinary } from 'cloudinary';
+import { Product } from "../models/products";
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -84,7 +85,7 @@ async function getProducts(q: string, offset: number, limit: number) {
 			],
 		});
 
-		const searchResult = response.results[0] as SearchResponse; // Extraemos los resultados de la posicion 0
+		const searchResult = response.results[0] as SearchResponse<Product>; // Extraemos los resultados de la posicion 0
 
 		return { // Y retornamos los hits
 			results: searchResult.hits,
@@ -107,7 +108,7 @@ async function getProductById(id: string) {
 			objectID: id // Y el id
 		});
 
-		return product; // Y retorna el producto encontrado
+		return product as Product; // Y retorna el producto encontrado
 	} catch (error) {
 		// Si Algolia nos dice explícitamente que no existe (404)
 		if (error.status === 404) {
