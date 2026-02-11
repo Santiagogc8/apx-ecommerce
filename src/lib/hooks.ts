@@ -26,13 +26,26 @@ export function useProducts(q: string){
     const [isError, setIsError]= useState<boolean | any>(false);
 
     useEffect(() => {
-        try {
-            fetchApi(`/search?q=${q}`)
-                .then(res => setProducts(res));
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                setIsError(false);
 
-            setIsLoading(false)
-        } catch(error){
-            setIsError(error.message);
+                const res = await fetchApi(`/search?q=${q}`);
+
+                setProducts(res);
+            } catch (error: any) {
+                console.error(error);
+                setIsError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (q) {
+            fetchData();
+        } else {
+            setIsLoading(false); 
         }
     }, [q]);
 

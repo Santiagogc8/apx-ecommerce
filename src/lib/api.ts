@@ -1,8 +1,9 @@
 // Creamos la funcion fetchApi que recibe una ruta (como /me) y unas options de tipo RequestInit (tipicas del fetch)
 export async function fetchApi(route: string, options: RequestInit = {}) {
+    const baseUrl = typeof window === 'undefined' ? (process.env.NEXT_URL || "http://localhost:3000") : "";
 
     // Hacemos el fetch con la ruta recibida
-	const res = await fetch("/api" + route, {
+	const res = await fetch(baseUrl + "/api" + route, {
         ...options, // Le pasamos las options 
         credentials: "same-origin"
 	});

@@ -6,6 +6,7 @@ type ProductOptions = {
     name: string;
     price: string;
     imageUrl: string;
+    id: string;
 }
 
 const priceFormatter = new Intl.NumberFormat('es-ES', {
@@ -13,7 +14,7 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
     maximumFractionDigits: 0,
 });
 
-export function ProductCard({name, price, imageUrl}: ProductOptions){
+export function ProductCard({name, price, imageUrl, id}: ProductOptions){
     const [isZoomed, setIsZoomed] = useState(false);
 
     useEffect(() => {
@@ -53,7 +54,7 @@ export function ProductCard({name, price, imageUrl}: ProductOptions){
                 />
             </div>
             <div className="self-center justify-self-center w-full py-3 px-5 flex items-center gap-3">
-                <Link href={'#'}>
+                <Link href={`/item/${id}`}>
                     <MoreInfo stroke="#000" />
                 </Link>
                 <p className="font-bold text-xl text-center text-black flex-1">$ {priceFormatter.format(+price)}</p>

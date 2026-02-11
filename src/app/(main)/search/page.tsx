@@ -16,9 +16,9 @@ function SearchResults() {
 
 	if (isLoading) {
         return (
-            <div className="w-[90%] flex flex-col items-center gap-5 py-30">
-                <p>Llamando a la api...</p>
-                <Skeleton customClasses="w-full h-[500px]" />
+            <div className="w-full flex flex-col items-center gap-5 py-30">
+                <p className="text-xl">Llamando a la api...</p>
+                <Skeleton customClasses="w-full h-[500px] max-w-[90%]" />
             </div>
         );
     }
@@ -43,6 +43,7 @@ function SearchResults() {
 								name={product.name}
 								price={product.unit_cost}
 								key={product.objectID}
+								id={product.objectID}
 							/>
 						))}
 					</div>
