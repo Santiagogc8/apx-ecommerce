@@ -27,9 +27,13 @@ export function CheckoutProduct({ product }: { product: Product }) {
 	}, [isLoading, user]);
 
 	const handlecreatePref = async () => {
+        setNewPrefLoading(true);
+
         const res = await fetchApi(`/order?productId=${product.objectID}`, {
             method: 'POST'
         });
+
+        setNewPrefLoading(false);
 
         const {paymentLink} = res;
 
@@ -72,7 +76,7 @@ export function CheckoutProduct({ product }: { product: Product }) {
 					<Link className="w-full" href={"/me"}>
 						<SecondaryBtn>Editar informacion de envio</SecondaryBtn>
 					</Link>
-					<PrimaryBtn handleClick={()=> handlecreatePref()} disabled={!stock}>{!stock ? 'No hay stock' : 'Continuar con la compra'}</PrimaryBtn>
+					<PrimaryBtn handleClick={()=> handlecreatePref()} isLoading={newPrefLoading} disabled={!stock}>{!stock ? 'No hay stock' : 'Continuar con la compra'}</PrimaryBtn>
 				</div>
 			</div>
 			<div className="flex flex-col gap-5 xl:w-1/2">
