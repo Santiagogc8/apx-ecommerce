@@ -59,7 +59,7 @@ export function ProductCard({name, price, imageUrl, id}: ProductOptions){
                     <MoreInfo stroke="#000" />
                 </Link>
                 <p className="font-bold text-xl text-center text-black flex-1">$ {priceFormatter.format(+price)}</p>
-                <Link href={'#'}>
+                <Link href={`/checkout/${id}`}>
                     <BuyIcon fill="#000" />
                 </Link>
             </div>

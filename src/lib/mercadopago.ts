@@ -8,7 +8,7 @@ const client = new MercadoPagoConfig({
 });
 
 // Creamos una url base
-const BASE_URL = process.env.VERCEL_URL || "https://aerobiological-leeann-blottingly.ngrok-free.dev";
+const BASE_URL = process.env.VERCEL_URL || "http://localhost:3000";
 
 // Inicializamos el objeto preferencia y le pasamos el cliente
 const pref = new Preference(client);
@@ -41,9 +41,9 @@ export async function createSingleProductPreference(options: CreatePrefOptions) 
             notification_url: `${BASE_URL}/api/ipn/mercadopago`, // Esta es la url donde nos avisara el webhook
 			// URL de redirección en los distintos casos
 			back_urls: {
-				success: "https://" + BASE_URL + "/donate/success",
-				failure: "https://" + BASE_URL + "/donate/failure",
-				pending: "https://" + BASE_URL + "/donate/pending",
+				success: "https://" + BASE_URL + `/me/orders/${options.transactionId}`,
+				failure: "https://" + BASE_URL + `/checkout/${options.productId}?status=failure`,
+				pending: "https://" + BASE_URL + "/pending",
 			},
 			// Id para identificar si el pago se completo
 			external_reference: options.transactionId,

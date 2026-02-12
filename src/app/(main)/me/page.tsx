@@ -212,14 +212,14 @@ export default function MePage() {
                                     onChange={handleChange('address')}
                                 />
                                 <InputField 
-                                    label="Info. Adicional"
+                                    label="Info. Adicional (Opcional)"
                                     name="additionalInfo"
                                     value={formData.address.additionalInfo}
                                     onChange={handleChange('address')}
                                     placeholder="Apto, Torre, Oficina..."
                                 />
                                 <InputField 
-                                    label="Código Postal"
+                                    label="Código Postal (Opcional)"
                                     name="zipCode"
                                     value={formData.address.zipCode}
                                     onChange={handleChange('address')}

@@ -131,6 +131,12 @@ export function Header() {
                                     >
                                         Mi Perfil
                                     </Link>
+									<Link
+                                        href="/me/orders"
+                                        className="hover:text-blue-400 transition-colors w-fit"
+                                    >
+                                        Mis ordenes
+                                    </Link>
                                 </>
                             )}
                         </nav>

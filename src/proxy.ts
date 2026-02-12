@@ -10,6 +10,10 @@ export default function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
+    if (pathname === '/checkout/:path' && !token) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
     // Protección de rutas privadas
     const protectedRoutes = ['/me'];
     
@@ -24,5 +28,5 @@ export default function middleware(request: NextRequest) {
 
 // Controla en qué rutas se ejecuta el middleware
 export const config = {
-    matcher: ['/me/:path*', '/login'],
+    matcher: ['/me/:path*', '/login', '/checkout/:path'],
 }
