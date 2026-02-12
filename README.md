@@ -4,33 +4,93 @@ Esta es una API RESTful robusta diseñada para gestionar un e-commerce moderno. 
 
 El sistema maneja el flujo completo de una tienda en línea: desde la autenticación de usuarios sin contraseñas (passwordless) hasta la sincronización de inventario y el procesamiento de pagos en tiempo real.
 
-## 📚 Documentación de la API
-La documentación completa de los endpoints, incluyendo ejemplos de request y response, está disponible en nuestra colección de Postman.
+## 🔗 Demo y Documentación
 
-**Link de la documentacion:** [Click aqui](https://documenter.getpostman.com/view/48981749/2sBXVmgpWo)
+* **Deploy en Producción:** [Ver Proyecto en Vercel](https://apx-ecommerce.vercel.app)
+* **Documentación API (Postman):** [Explorar Endpoints y Esquemas](https://documenter.getpostman.com/view/48981749/2sBXVmgpWo)
+
+---
+
+## ✨ Características de Ingeniería
+
+### 🔐 Seguridad y Autenticación (Passwordless)
+* **Login OTP:** Autenticación mediante códigos de un solo uso enviados por email (Resend), eliminando la vulnerabilidad de contraseñas estáticas.
+* **Sesiones JWT:** Manejo seguro de estado de usuario mediante JSON Web Tokens almacenados en cookies/headers.
+* **Middlewares:** Protección de rutas y verificación de roles a nivel de Edge.
+
+### 💳 Pasarela de Pagos & Transacciones
+* **MercadoPago Checkout Pro:** Integración completa para pagos seguros.
+* **Webhooks (IPN):** Endpoint dedicado (`/api/ipn/mercadopago`) que escucha notificaciones asíncronas para confirmar pagos.
+* **Control de Stock Atómico:**
+    1.  Verifica stock disponible antes de generar la preferencia.
+    2.  Si el pago es aprobado -> Se confirma la orden y se notifica.
+    3.  Si el pago es rechazado -> El sistema **restaura automáticamente** el stock inventariado (Rollback).
+
+### ⚡ Rendimiento y Búsqueda
+* **Algolia Sync:** Sincronización automática entre la base de datos de productos (Airtable) y el motor de búsqueda (Algolia) para resultados en milisegundos.
+* **Server Components:** Renderizado del lado del servidor (RSC) para optimizar el SEO y la carga inicial (LCP).
+
+---
 
 ## 🛠 Tech Stack
 
-El proyecto está construido con las siguientes tecnologías:
-
-* **Framework:** [Next.js](https://nextjs.org/) (App Router & API Routes)
+**Core:**
+* **Framework:** [Next.js 14](https://nextjs.org/) (App Router & Server Actions)
 * **Lenguaje:** TypeScript
-* **Base de Datos (Usuarios):** Google Firestore (Firebase Admin)
-* **Base de Datos (Productos & Ordenes):** Airtable
-* **Búsqueda:** Algolia (para indexado y búsqueda full-text)
-* **Pagos:** MercadoPago (Checkout Pro & Webhooks/IPN)
-* **Emails:** Resend
-* **Validación:** Zod
+* **Estilizado:** Tailwind CSS + Componentes UI personalizados
 
-## ✨ Características Principales
+**Backend & Datos:**
+* **Usuarios:** Google Firestore (Firebase Admin SDK).
+* **CMS & Productos:** Airtable (usado como base de datos relacional-like).
+* **Validación:** Zod (Esquemas estrictos para API Requests).
 
-* **Autenticación Segura:** Sistema de login "Passwordless" mediante códigos de un solo uso (OTP) enviados por email.
-* **Gestión de Usuarios:** Endpoints protegidos para visualizar y editar perfil y direcciones de envío.
-* **Sincronización de Inventario:** Sistema automatizado para sincronizar productos desde Airtable hacia Algolia para búsquedas instantáneas.
-* **Control de Stock:** Verificación de stock en tiempo real antes de generar órdenes y devolución automática de stock si un pago es rechazado.
-* **Pagos Automatizados:** Integración completa con MercadoPago, incluyendo notificaciones IPN para confirmar el estado de las transacciones automáticamente.
+**Integraciones:**
+* **Pagos:** MercadoPago SDK.
+* **Emails:** Resend API.
+* **Búsqueda:** Algolia Search.
 
-## ⚙️ Variables de Entorno
+---
+
+## 📂 Arquitectura del Proyecto
+
+El proyecto sigue una arquitectura **MVC (Model-View-Controller)** adaptada al App Router de Next.js, separando claramente la lógica de negocio de la interfaz de usuario.
+
+```bash
+src/
+├── app/                  # Next.js App Router
+│   ├── (auth)/           # Rutas públicas de autenticación (Login)
+│   ├── (main)/           # Rutas de la tienda (Home)
+│   ├── item/[slug]/      # Página de detalle de producto (SSR)
+│   ├── me/               # Rutas protegidas (Profile, Orders)
+│   ├── search/           # Página de búsqueda (Client + Algolia)
+│   └── api/              # Endpoints REST (Webhooks, Sync, Auth)
+├── components/           # Componentes lógicos y wrappers (AuthWrapper)
+├── controllers/          # Lógica de negocio (Orquestación de datos)
+├── lib/                  # Conexiones a servicios externos (Firestore, Algolia, MP)
+├── models/               # Acceso directo a datos (Data Access Layer)
+└── ui/                   # Componentes de presentación puros (Botones, Inputs)
+```
+
+## ⚙️ Configuración Local
+Sigue estos pasos para levantar el proyecto en tu entorno local.
+1. **Prerrequisitos**
+  * Node.js 18+
+  * Una cuenta en MercadoPago Developers (para obtener credenciales de prueba).
+  * Una cuenta en Algolia, Airtable y Firebase.
+
+2. **Clonar el repositorio**
+
+  ```bash
+  git clone [https://github.com/tu-usuario/apx-ecommerce.git](https://github.com/tu-usuario/apx-ecommerce.git)
+  cd apx-ecommerce
+  ```
+
+3. **Instalar dependencias**
+  ```bash
+  npm install
+  ```
+
+4. **Variables de Entorno**
 
 Para ejecutar este proyecto, necesitarás configurar las siguientes variables de entorno en tu archivo `.env.local`:
 
@@ -54,3 +114,13 @@ MP_TOKEN=access_token_de_mercadopago
 
 # Resend (Emails)
 RESEND_API_KEY=api_key_de_resend
+```
+
+5. **Ejecutar el servidor de desarrollo**
+  ```bash
+  npm run dev
+  ```
+El servidor iniciará en http://localhost:3000
+
+### 👨‍💻 Autor
+Desarrollado por Santiago Guzman - Systems Engineer & Fullstack Developer
