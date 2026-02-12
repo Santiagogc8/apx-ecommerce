@@ -16,7 +16,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
 
     if (isLoading){
         return (
-            <div className="h-full w-full flex justify-center items-center">
+            <div className="min-h-screen w-full flex justify-center items-center">
                 <p>Cargando...</p>
             </div>
         )

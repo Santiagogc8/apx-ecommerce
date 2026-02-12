@@ -10,7 +10,7 @@ export type CustomBtnProps = {
 
 export function BaseBtn({children, handleClick, type = "button", className, disabled}: CustomBtnProps) {
 	return (
-		<button className={`w-full px-4 py-2 hover:cursor-pointer transition-all ${className}`} type={type} onClick={handleClick} disabled={disabled}>
+		<button className={`w-full p-2 ${className} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'hover:cursor-pointer transition-all hover:shadow-[0_0_20px_#f97316]'}`} type={type} onClick={handleClick} disabled={disabled}>
 			{children}
 		</button>
 	);

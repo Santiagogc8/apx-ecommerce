@@ -7,7 +7,7 @@ export default function DashboardLayout({
 }) {
     return (
         <>
-            <main style={bgPattern} className="h-screen">{children}</main>
+            <main style={bgPattern} className="min-h-screen">{children}</main>
         </>
     );
 }
